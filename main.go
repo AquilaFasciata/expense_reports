@@ -42,5 +42,10 @@ func main() {
 		return
 	}
 
-	println("%v", roster)
+	/* Next steps:
+	Create array of names, parse names into first and last
+	Create array of locations and EE#
+	Create a copy of expense reports in output directory
+	Rename and fill out the expense reports
+	*/
 }
