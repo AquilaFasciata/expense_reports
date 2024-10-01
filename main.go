@@ -41,10 +41,14 @@ func main() {
 	_, err = fmt.Scan(&destinationPath)
 	err_check(err)
 
-	// f13 from cell
-	validations, err := template.GetDataValidations("Expense Report Template")
+	locations, _ := template.GetRows("Mileage and Minutes")
+	for _, row := range locations {
+		fmt.Println(row)
+	}
+
+	firstSheet := roster.GetSheetList()[0]
+	roster_rows, err := roster.GetCols(firstSheet)
 	err_check(err)
-	fmt.Println(validations)
 
 	/* Next steps:
 	Create array of names, parse names into first and last
