@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/xuri/excelize/v2"
@@ -37,9 +38,20 @@ func main() {
 	}
 	fmt.Println(template)
 
-	fmt.Println("What is the path of the output?")
-	_, err = fmt.Scan(&destinationPath)
-	err_check(err)
+	for {
+		fmt.Println("What is the path of the output?")
+		_, err = fmt.Scan(&destinationPath)
+		if err != nil {
+			fmt.Println("Error opening directory: ", err, "\n\n")
+			continue
+		}
+		_, err = os.ReadDir(destinationPath)
+		if err != nil {
+			fmt.Println("Error opening directory: ", err, "\n\n")
+			continue
+		}
+		break
+	}
 
 	locations, _ := template.GetRows("Mileage and Minutes")
 	for _, row := range locations {
@@ -47,7 +59,7 @@ func main() {
 	}
 
 	firstSheet := roster.GetSheetList()[0]
-	roster_rows, err := roster.GetCols(firstSheet)
+	roster_cols, err := roster.GetCols(firstSheet)
 	err_check(err)
 
 	/* Next steps:
