@@ -39,13 +39,11 @@ func main() {
 
 	fmt.Println("What is the path of the output?")
 	_, err = fmt.Scan(&destinationPath)
-	for err != nil {
-		fmt.Println(err)
-		return
-	}
+	err_check(err)
 
 	// f13 from cell
-	validations, _ := template.GetDataValidations("Expense Report Template")
+	validations, err := template.GetDataValidations("Expense Report Template")
+	err_check(err)
 	fmt.Println(validations)
 
 	/* Next steps:
@@ -54,4 +52,11 @@ func main() {
 	Create a copy of expense reports in output directory
 	Rename and fill out the expense reports
 	*/
+}
+
+func err_check(err error) {
+	for err != nil {
+		fmt.Println(err)
+		return
+	}
 }
