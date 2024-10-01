@@ -21,6 +21,7 @@ func main() {
 		fmt.Println("Error reading roster: ", err)
 		return
 	}
+	fmt.Println(roster)
 
 	fmt.Println("What is the path to the base report?")
 	_, err = fmt.Scan(&templatePath)
@@ -34,6 +35,7 @@ func main() {
 		fmt.Println("Error reading template: ", err)
 		return
 	}
+	fmt.Println(template)
 
 	fmt.Println("What is the path of the output?")
 	_, err = fmt.Scan(&destinationPath)
@@ -41,6 +43,10 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	// f13 from cell
+	validations, _ := template.GetDataValidations("Expense Report Template")
+	fmt.Println(validations)
 
 	/* Next steps:
 	Create array of names, parse names into first and last
