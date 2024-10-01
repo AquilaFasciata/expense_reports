@@ -62,6 +62,23 @@ func main() {
 	roster_cols, err := roster.GetCols(firstSheet)
 	err_check(err)
 
+	for i, name := range roster_cols[1] {
+		if name == "" {
+			continue
+		}
+		template.SetCellStr("Expense Report Template", "D7", name)
+		template.SetCellStr("Expense Report Template", "D6", roster_cols[0][i])
+
+		for j := 1; j < len(locations); j++ {
+			if locations[j][0][1:2] == roster_cols[2][i+3] {
+				template.SetCellStr("Expense Report Template", "D8", locations[0][j])
+				template.SetCellStr("Expense Report Template", "F13", locations[0][j])
+			}
+		}
+
+		template.SaveAs(destinationPath + "/" + name + ".xlsm")
+	}
+
 	/* Next steps:
 	Create array of names, parse names into first and last
 	Create array of locations and EE#
