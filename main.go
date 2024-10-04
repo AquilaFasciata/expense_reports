@@ -72,6 +72,9 @@ func main() {
 		}
 		template.SetCellStr("Expense Report Template", "D7", name)
 		template.SetCellStr("Expense Report Template", "D6", roster_cols[0][i])
+    template.SetCellStr("Expense Report Template", "C13", "Welcome to Mike's")
+    template.SetCellStr("Expense Report Template", "E13", "Yes")
+    template.SetCellStr("Expense Report Template", "B13", today.Format("00/00/0000"))
 
 		for j := 1; j < len(locations); j++ {
 			location := get_loc_num(locations[j][0])
@@ -79,7 +82,7 @@ func main() {
 			if strings.Compare(location, roster_loc) == 0 {
 				template.SetCellStr("Expense Report Template", "D8", locations[j][0])
 				template.SetCellStr("Expense Report Template", "F13", locations[j][0])
-				template.SetCellStr("Expense Report Template", "B13", today.Format("09/12/2024"))
+				
 				break
 			}
 		}
@@ -87,6 +90,7 @@ func main() {
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
 	}
 	// TODO Build ui
+	// TODO Verify additions from Github
 }
 
 func err_check(err error) {
