@@ -86,13 +86,7 @@ func main() {
 
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
 	}
-
-	/* Next steps:
-	Create array of names, parse names into first and last
-	Create array of locations and EE#
-	Create a copy of expense reports in output directory
-	Rename and fill out the expense reports
-	*/
+	// TODO Build ui
 }
 
 func err_check(err error) {
