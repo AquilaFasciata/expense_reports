@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -11,8 +12,10 @@ import (
 
 func main() {
 	var rosterPath, templatePath, destinationPath string
+	scanner := bufio.NewReader(os.Stdin)
 	fmt.Println("What is the path to the roster?")
-	_, err := fmt.Scan(&rosterPath)
+	rosterPath, err := scanner.ReadString('\n')
+	rosterPath = strings.TrimSpace(rosterPath)
 	for err != nil {
 		fmt.Println(err)
 		return
@@ -25,7 +28,8 @@ func main() {
 	}
 
 	fmt.Println("What is the path to the base report?")
-	_, err = fmt.Scan(&templatePath)
+	templatePath, err = scanner.ReadString('\n')
+	templatePath = strings.TrimSpace(templatePath)
 	for err != nil {
 		fmt.Println(err)
 		return
@@ -39,7 +43,8 @@ func main() {
 
 	for {
 		fmt.Println("What is the path of the output?")
-		_, err = fmt.Scan(&destinationPath)
+		destinationPath, err = scanner.ReadString('\n')
+		destinationPath = strings.TrimSpace(destinationPath)
 		if err != nil {
 			fmt.Println("Error opening directory: ", err, "\n\n")
 			continue
