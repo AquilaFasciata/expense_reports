@@ -23,7 +23,6 @@ func main() {
 		fmt.Println("Error reading roster: ", err)
 		return
 	}
-	fmt.Println(roster)
 
 	fmt.Println("What is the path to the base report?")
 	_, err = fmt.Scan(&templatePath)
@@ -37,7 +36,6 @@ func main() {
 		fmt.Println("Error reading template: ", err)
 		return
 	}
-	fmt.Println(template)
 
 	for {
 		fmt.Println("What is the path of the output?")
@@ -82,6 +80,7 @@ func main() {
 		}
 
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
+		template, _ = excelize.OpenFile(templatePath)
 	}
 	// TODO Build ui
 	// TODO Verify additions from Github
