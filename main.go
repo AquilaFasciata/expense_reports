@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"image/color"
 	"log"
 	"os"
 	"strings"
@@ -25,7 +26,7 @@ func main() {
 			log.Fatal(err)
 		}
 		os.Exit(1)
-	}
+	}()
 
 	scanner := bufio.NewReader(os.Stdin)
 	fmt.Println("What is the path to the roster?")
@@ -128,4 +129,21 @@ func get_loc_num(location string) string {
 	}
 
 	return result
+}
+
+func run(window *app.Window) {
+	theme := material.NewTheme()
+	var ops op.Ops
+	for {
+		switch evnt := window.Event().(type) {
+		case app.DestroyEvent:
+			return evnt.Err
+		case app.FrameEvent:
+			gtx := app.NewContext(&ops, evnt)
+
+			title := material.H1(theme, "Hello, GUI!")
+
+			maroon = color
+		}
+	}
 }
