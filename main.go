@@ -85,6 +85,7 @@ func main() {
 			}
 		}
 
+		template.UpdateLinkedValue()
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
 		template, _ = excelize.OpenFile(templatePath)
 	}
