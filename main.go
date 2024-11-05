@@ -30,6 +30,7 @@ func main() {
 	fmt.Println("What is the path to the base report?")
 	templatePath, err = scanner.ReadString('\n')
 	templatePath = strings.TrimSpace(templatePath)
+	templatePath = strings.Trim(templatePath, "\"")
 	for err != nil {
 		fmt.Println(err)
 		return
