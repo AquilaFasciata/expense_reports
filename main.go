@@ -3,15 +3,30 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
 
+	"gioui.org/app"
+	"gioui.org/op"
+	"gioui.org/text"
+	"gioui.org/widget/material"
 	"github.com/xuri/excelize/v2"
 )
 
 func main() {
 	var rosterPath, templatePath, destinationPath string
+
+	go func() {
+		window := new(app.Window)
+		err := run(window)
+		if err != nil {
+			log.Fatal(err)
+		}
+		os.Exit(1)
+	}
+
 	scanner := bufio.NewReader(os.Stdin)
 	fmt.Println("What is the path to the roster?")
 	rosterPath, err := scanner.ReadString('\n')
