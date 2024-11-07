@@ -131,7 +131,7 @@ func get_loc_num(location string) string {
 	return result
 }
 
-func run(window *app.Window) {
+func run(window *app.Window) error {
 	theme := material.NewTheme()
 	var ops op.Ops
 	for {
@@ -143,7 +143,14 @@ func run(window *app.Window) {
 
 			title := material.H1(theme, "Hello, GUI!")
 
-			maroon = color
+			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
+			title.Color = maroon
+
+			title.Alignment = text.Middle
+
+			title.Layout(gtx)
+
+			evnt.Frame(gtx.Ops)
 		}
 	}
 }
