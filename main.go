@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"image/color"
-	"io"
 	"log"
 	"os"
 	"strings"
@@ -14,7 +13,6 @@ import (
 	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/text"
-	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 
@@ -34,7 +32,7 @@ func main() {
 		os.Exit(1)
 	}()
 
-	business()
+	business(rosterPath, templatePath, destinationPath)
 
 	// TODO Build ui
 	// TODO Verify additions from Github
@@ -170,9 +168,6 @@ func run(window *app.Window) error {
 					return title.Layout(gtx)
 				}),
 				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-					return layout.Spacer{Height: unit.Dp(75)}.Layout(gtx)
-				}),
-				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 					return button.Layout(gtx)
 				}))
 
@@ -181,19 +176,17 @@ func run(window *app.Window) error {
 	}
 }
 
-func file_input(gtx layout.Context, label string, theme material.Theme) (layout.FlexChild, widget.Editor) {
-	input_box := widget.Editor
-	returned_layout := layout.Flex{
-		Axis: layout.Horizontal,
+func file_input(gtx layout.Context, label string, theme material.Theme) layout.Dimensions {
+	input_box := widget.Editor{}
+	return layout.Flex{
+		Axis:    layout.Horizontal,
 		Spacing: layout.SpaceStart,
-	}.Layout(gtx, 
+	}.Layout(gtx,
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return material.Label(&theme, theme.TextSize, label + ":")
+			return material.Label(&theme, theme.TextSize, label+":").Layout(gtx)
 		}),
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return material.Editor(&theme, )
-		})
+			return material.Editor(&theme, &input_box, "C:\\Users\\me\\file.xlsx").Layout(gtx)
+		}),
 	)
-
-	return (returned_layout, input_box)
 }
