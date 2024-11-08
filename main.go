@@ -12,8 +12,9 @@ import (
 	"gioui.org/app"
 	"gioui.org/op"
 	"gioui.org/text"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
-	"gioui.org/x/explorer"
+	// "gioui.org/x/explorer"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -134,6 +135,8 @@ func get_loc_num(location string) string {
 
 func run(window *app.Window) error {
 	theme := material.NewTheme()
+
+	button := widget.Clickable{}
 	var ops op.Ops
 	for {
 		switch evnt := window.Event().(type) {
@@ -143,6 +146,7 @@ func run(window *app.Window) error {
 			gtx := app.NewContext(&ops, evnt)
 
 			title := material.H1(theme, "Hello, GUI!")
+			button := material.Button(theme, &button, "Test")
 
 			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
 			title.Color = maroon
@@ -150,6 +154,7 @@ func run(window *app.Window) error {
 			title.Alignment = text.Middle
 
 			title.Layout(gtx)
+			button.Layout(gtx)
 
 			evnt.Frame(gtx.Ops)
 		}
