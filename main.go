@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"image/color"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -33,6 +34,13 @@ func main() {
 		os.Exit(1)
 	}()
 
+	business()
+
+	// TODO Build ui
+	// TODO Verify additions from Github
+}
+
+func business(rosterPath, templatePath, destinationPath string) {
 	scanner := bufio.NewReader(os.Stdin)
 	fmt.Println("What is the path to the roster?")
 	rosterPath, err := scanner.ReadString('\n')
@@ -110,8 +118,6 @@ func main() {
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
 		template, _ = excelize.OpenFile(templatePath)
 	}
-	// TODO Build ui
-	// TODO Verify additions from Github
 }
 
 func err_check(err error) {
@@ -173,4 +179,21 @@ func run(window *app.Window) error {
 			evnt.Frame(gtx.Ops)
 		}
 	}
+}
+
+func file_input(gtx layout.Context, label string, theme material.Theme) (layout.FlexChild, widget.Editor) {
+	input_box := widget.Editor
+	returned_layout := layout.Flex{
+		Axis: layout.Horizontal,
+		Spacing: layout.SpaceStart,
+	}.Layout(gtx, 
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return material.Label(&theme, theme.TextSize, label + ":")
+		}),
+		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+			return material.Editor(&theme, )
+		})
+	)
+
+	return (returned_layout, input_box)
 }
