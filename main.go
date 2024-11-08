@@ -10,10 +10,13 @@ import (
 	"time"
 
 	"gioui.org/app"
+	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/text"
+	"gioui.org/unit"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
+
 	// "gioui.org/x/explorer"
 	"github.com/xuri/excelize/v2"
 )
@@ -153,8 +156,19 @@ func run(window *app.Window) error {
 
 			title.Alignment = text.Middle
 
-			title.Layout(gtx)
-			button.Layout(gtx)
+			layout.Flex{
+				Axis:    layout.Vertical,
+				Spacing: layout.SpaceStart,
+			}.Layout(gtx,
+				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+					return title.Layout(gtx)
+				}),
+				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+					return layout.Spacer{Height: unit.Dp(75)}.Layout(gtx)
+				}),
+				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+					return button.Layout(gtx)
+				}))
 
 			evnt.Frame(gtx.Ops)
 		}
