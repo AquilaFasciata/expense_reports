@@ -7,8 +7,11 @@ import (
 	"strings"
 	"time"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 
 	"github.com/xuri/excelize/v2"
@@ -16,6 +19,40 @@ import (
 
 func main() {
 	var rosterPath, templatePath, destinationPath string
+
+	prog := app.New()
+	mainWindow := prog.NewWindow("Expense Report Builder")
+
+	mainWindow.SetContent(container.NewVBox())
+
+	business(rosterPath, templatePath, destinationPath)
+	// TODO Build ui
+	// TODO Verify additions from Github
+}
+
+func err_check(err error) {
+	for err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func get_loc_num(location string) string {
+	var result string
+	for _, character := range location {
+		if character == '#' {
+			continue
+		}
+		if character == ' ' {
+			break
+		}
+		result += string(character)
+	}
+
+	return result
+}
+
+func business(rosterPath, templatePath, destinationPath string) {
 	scanner := bufio.NewReader(os.Stdin)
 	fmt.Println("What is the path to the roster?")
 	rosterPath, err := scanner.ReadString('\n')
@@ -93,28 +130,21 @@ func main() {
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
 		template, _ = excelize.OpenFile(templatePath)
 	}
-	// TODO Build ui
-	// TODO Verify additions from Github
 }
 
-func err_check(err error) {
-	for err != nil {
-		fmt.Println(err)
-		return
-	}
+func fileOpenRow(parentWindow fyne.Window, label string, pathBuff *string) (*fyne.Container, *widget.Entry) {
+	input := widget.NewEntry()
+	input.SetPlaceHolder("C:\\Users\\me\\file.xlsx")
+	containy := container.NewHBox(widget.NewLabel(label), input, widget.NewButton("Browse", func() { fileDialog(parentWindow, pathBuff) }))
+	return containy, input
 }
 
-func get_loc_num(location string) string {
-	var result string
-	for _, character := range location {
-		if character == '#' {
-			continue
+func fileDialog(parentWindow fyne.Window, pathBuff *string) {
+	dialog.ShowFileOpen(func(reader fyne.URIReadCloser, err error) {
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
-		if character == ' ' {
-			break
-		}
-		result += string(character)
-	}
-
-	return result
+		*pathBuff = reader.URI().Path()
+	}, parentWindow)
 }
