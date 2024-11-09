@@ -11,21 +11,32 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 
 	"github.com/xuri/excelize/v2"
 )
 
-func main() {
-	var rosterPath, templatePath, destinationPath string
+type InputType int
 
+const (
+	FILE   InputType = iota
+	FOLDER InputType = iota
+)
+
+func main() {
 	prog := app.New()
 	mainWindow := prog.NewWindow("Expense Report Builder")
+	mainWindow.Resize(fyne.Size{Height: 412, Width: 720})
 
-	mainWindow.SetContent(container.NewVBox())
+	templateRow, templatePathBox := fileOpenRow(mainWindow, "Template: ", FILE)
+	rosterRow, rosterPathBox := fileOpenRow(mainWindow, "Roster: ", FILE)
+	outputRow, outputPathBox := fileOpenRow(mainWindow, "Output: ", FOLDER)
 
-	business(rosterPath, templatePath, destinationPath)
+	fmt.Println(templateRow, templatePathBox, rosterRow, rosterPathBox, outputRow, outputPathBox)
+
+	mainWindow.SetContent(container.NewVBox(templateRow, rosterRow))
+
+	mainWindow.ShowAndRun()
 	// TODO Build ui
 	// TODO Verify additions from Github
 }
@@ -132,19 +143,36 @@ func business(rosterPath, templatePath, destinationPath string) {
 	}
 }
 
-func fileOpenRow(parentWindow fyne.Window, label string, pathBuff *string) (*fyne.Container, *widget.Entry) {
+func fileOpenRow(parentWindow fyne.Window, label string, openType InputType) (*fyne.Container, *widget.Entry) {
 	input := widget.NewEntry()
 	input.SetPlaceHolder("C:\\Users\\me\\file.xlsx")
-	containy := container.NewHBox(widget.NewLabel(label), input, widget.NewButton("Browse", func() { fileDialog(parentWindow, pathBuff) }))
+	input.Resize(fyne.NewSize(400, input.Size().Height))
+	var containy *fyne.Container
+	if openType == FILE {
+		containy = container.NewHBox(widget.NewLabel(label), input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
+	} else {
+		containy = container.NewHBox(widget.NewLabel(label), input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
+	}
+	containy.Resize(fyne.NewSize(720, input.Size().Height))
 	return containy, input
 }
 
-func fileDialog(parentWindow fyne.Window, pathBuff *string) {
+func fileDialog(parentWindow fyne.Window, box *widget.Entry) {
 	dialog.ShowFileOpen(func(reader fyne.URIReadCloser, err error) {
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		*pathBuff = reader.URI().Path()
+		box.Text = reader.URI().Path()
+	}, parentWindow)
+}
+
+func folderDialog(parentWindow fyne.Window, box *widget.Entry) {
+	dialog.ShowFolderOpen(func(reader fyne.ListableURI, err error) {
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		box.Text = reader.Path()
 	}, parentWindow)
 }
