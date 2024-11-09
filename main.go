@@ -3,42 +3,15 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"image/color"
-	"log"
 	"os"
 	"strings"
 	"time"
 
-	"gioui.org/app"
-	"gioui.org/layout"
-	"gioui.org/op"
-	"gioui.org/text"
-	"gioui.org/widget"
-	"gioui.org/widget/material"
-
-	// "gioui.org/x/explorer"
 	"github.com/xuri/excelize/v2"
 )
 
 func main() {
 	var rosterPath, templatePath, destinationPath string
-
-	go func() {
-		window := new(app.Window)
-		err := run(window)
-		if err != nil {
-			log.Fatal(err)
-		}
-		os.Exit(1)
-	}()
-
-	business(rosterPath, templatePath, destinationPath)
-
-	// TODO Build ui
-	// TODO Verify additions from Github
-}
-
-func business(rosterPath, templatePath, destinationPath string) {
 	scanner := bufio.NewReader(os.Stdin)
 	fmt.Println("What is the path to the roster?")
 	rosterPath, err := scanner.ReadString('\n')
@@ -116,6 +89,8 @@ func business(rosterPath, templatePath, destinationPath string) {
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
 		template, _ = excelize.OpenFile(templatePath)
 	}
+	// TODO Build ui
+	// TODO Verify additions from Github
 }
 
 func err_check(err error) {
@@ -138,55 +113,4 @@ func get_loc_num(location string) string {
 	}
 
 	return result
-}
-
-func run(window *app.Window) error {
-	theme := material.NewTheme()
-
-	button := widget.Clickable{}
-	var ops op.Ops
-	for {
-		switch evnt := window.Event().(type) {
-		case app.DestroyEvent:
-			return evnt.Err
-		case app.FrameEvent:
-			gtx := app.NewContext(&ops, evnt)
-
-			title := material.H1(theme, "Hello, GUI!")
-			button := material.Button(theme, &button, "Test")
-
-			maroon := color.NRGBA{R: 127, G: 0, B: 0, A: 255}
-			title.Color = maroon
-
-			title.Alignment = text.Middle
-
-			layout.Flex{
-				Axis:    layout.Vertical,
-				Spacing: layout.SpaceStart,
-			}.Layout(gtx,
-				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-					return title.Layout(gtx)
-				}),
-				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-					return button.Layout(gtx)
-				}))
-
-			evnt.Frame(gtx.Ops)
-		}
-	}
-}
-
-func file_input(gtx layout.Context, label string, theme material.Theme) layout.Dimensions {
-	input_box := widget.Editor{}
-	return layout.Flex{
-		Axis:    layout.Horizontal,
-		Spacing: layout.SpaceStart,
-	}.Layout(gtx,
-		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return material.Label(&theme, theme.TextSize, label+":").Layout(gtx)
-		}),
-		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return material.Editor(&theme, &input_box, "C:\\Users\\me\\file.xlsx").Layout(gtx)
-		}),
-	)
 }
