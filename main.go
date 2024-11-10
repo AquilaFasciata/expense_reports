@@ -164,16 +164,20 @@ func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne
 	return containy, input
 }
 
-func fileDialog(parentWindow fyne.Window, box *widget.Entry) {
+func fileDialog(parentWindow fyne.Window, box *widget.Entry) error {
 	dialog.ShowFileOpen(func(reader fyne.URIReadCloser, err error) {
 		if err != nil {
 			fmt.Println(err)
-			os.Exit(1)
+			dialog.ShowError(err, parentWindow)
+			return err
 		}
+		fmt.Println(reader.URI().Extension())
 		box.Text = ""
 		box.Text = reader.URI().Path()
 		box.Refresh()
 	}, parentWindow)
+
+	return nil
 }
 
 func folderDialog(parentWindow fyne.Window, box *widget.Entry) {
