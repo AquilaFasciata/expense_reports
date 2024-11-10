@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 	"time"
 
@@ -165,11 +167,18 @@ func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne
 }
 
 func fileDialog(parentWindow fyne.Window, box *widget.Entry) error {
+	xlExtensions := []string{".xlsx", ".xls", ".xlsm"}
+	var anyError error = nil
 	dialog.ShowFileOpen(func(reader fyne.URIReadCloser, err error) {
 		if err != nil {
+			anyError = err
 			fmt.Println(err)
 			dialog.ShowError(err, parentWindow)
-			return err
+			return
+		}
+		if !slices.Contains(xlExtensions, reader.URI().Extension()) {
+			anyError = errors.New("Selected file is not a valid Excel file!")
+			return
 		}
 		fmt.Println(reader.URI().Extension())
 		box.Text = ""
@@ -177,17 +186,22 @@ func fileDialog(parentWindow fyne.Window, box *widget.Entry) error {
 		box.Refresh()
 	}, parentWindow)
 
-	return nil
+	return anyError
 }
 
-func folderDialog(parentWindow fyne.Window, box *widget.Entry) {
+func folderDialog(parentWindow fyne.Window, box *widget.Entry) error {
+	var anyError error = nil
 	dialog.ShowFolderOpen(func(reader fyne.ListableURI, err error) {
 		if err != nil {
+			anyError = err
 			fmt.Println(err)
-			os.Exit(1)
+			dialog.ShowError(err, parentWindow)
+			return
 		}
 		box.Text = ""
 		box.Text = reader.Path()
 		box.Refresh()
 	}, parentWindow)
+
+	return anyError
 }
