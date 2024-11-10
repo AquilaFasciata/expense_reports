@@ -12,7 +12,6 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"gioui.org/io/input"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -29,13 +28,17 @@ func main() {
 	mainWindow := prog.NewWindow("Expense Report Builder")
 	mainWindow.Resize(fyne.Size{Height: 412, Width: 720})
 
-	templateRow, templatePathBox := fileOpenRow(mainWindow, "Template: ", FILE)
-	rosterRow, rosterPathBox := fileOpenRow(mainWindow, "Roster: ", FILE)
-	outputRow, outputPathBox := fileOpenRow(mainWindow, "Output: ", FOLDER)
+	templateRow, templatePathBox := inputRow(mainWindow, "Template: ", FILE)
+	rosterRow, rosterPathBox := inputRow(mainWindow, "Roster: ", FILE)
+	outputRow, outputPathBox := inputRow(mainWindow, "Output: ", FOLDER)
 
 	fmt.Println(templateRow, templatePathBox, rosterRow, rosterPathBox, outputRow, outputPathBox)
 
-	mainWindow.SetContent(container.NewVBox(templateRow, rosterRow))
+	mainWindow.SetContent(container.NewStack(
+		container.NewVBox(
+			templateRow, rosterRow,
+		),
+	))
 
 	mainWindow.ShowAndRun()
 	// TODO Build ui
@@ -144,15 +147,18 @@ func business(rosterPath, templatePath, destinationPath string) {
 	}
 }
 
-func fileOpenRow(parentWindow fyne.Window, label string, openType InputType) (*fyne.Container, *widget.Entry) {
+func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne.Container, *widget.Entry) {
 	input := widget.NewEntry()
 	input.SetPlaceHolder("C:\\Users\\me\\file.xlsx")
 	input.Resize(fyne.NewSize(400, input.Size().Height))
+
+	inputLabel := widget.NewLabel(label)
+	inputLabel.Resize(fyne.Size{Width: input.MinSize().Width, Height: inputLabel.Size().Height})
 	var containy *fyne.Container
 	if openType == FILE {
-		containy = container.NewHBox(widget.NewLabel(label), input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
+		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
 	} else {
-		containy = container.NewHBox(widget.NewLabel(label), input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
+		containy = container.NewGridWithColumns(3, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
 	}
 	containy.Resize(fyne.NewSize(720, input.Size().Height))
 	return containy, input
@@ -166,6 +172,7 @@ func fileDialog(parentWindow fyne.Window, box *widget.Entry) {
 		}
 		box.Text = ""
 		box.Text = reader.URI().Path()
+		box.Refresh()
 	}, parentWindow)
 }
 
@@ -177,5 +184,6 @@ func folderDialog(parentWindow fyne.Window, box *widget.Entry) {
 		}
 		box.Text = ""
 		box.Text = reader.Path()
+		box.Refresh()
 	}, parentWindow)
 }
