@@ -12,6 +12,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
+	"gioui.org/io/input"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -163,6 +164,7 @@ func fileDialog(parentWindow fyne.Window, box *widget.Entry) {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+		box.Text = ""
 		box.Text = reader.URI().Path()
 	}, parentWindow)
 }
@@ -173,6 +175,7 @@ func folderDialog(parentWindow fyne.Window, box *widget.Entry) {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+		box.Text = ""
 		box.Text = reader.Path()
 	}, parentWindow)
 }
