@@ -38,7 +38,7 @@ func main() {
 
 	mainWindow.SetContent(container.NewStack(
 		container.NewVBox(
-			templateRow, rosterRow,
+			templateRow, rosterRow, outputRow,
 		),
 	))
 
@@ -162,7 +162,6 @@ func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne
 	} else {
 		containy = container.NewGridWithColumns(3, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
 	}
-	containy.Resize(fyne.NewSize(720, input.Size().Height))
 	return containy, input
 }
 
