@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	"os"
@@ -30,28 +29,25 @@ func main() {
 	mainWindow := prog.NewWindow("Expense Report Builder")
 	mainWindow.Resize(fyne.Size{Height: 412, Width: 720})
 
-	templateRow, templatePathBox := inputRow(mainWindow, "Template: ", FILE)
-	rosterRow, rosterPathBox := inputRow(mainWindow, "Roster: ", FILE)
-	outputRow, outputPathBox := inputRow(mainWindow, "Output: ", FOLDER)
-
-	fmt.Println(templateRow, templatePathBox, rosterRow, rosterPathBox, outputRow, outputPathBox)
+	templateRow, templatePathBox := inputRow(&mainWindow, "Template: ", FILE)
+	rosterRow, rosterPathBox := inputRow(&mainWindow, "Roster: ", FILE)
+	outputRow, outputPathBox := inputRow(&mainWindow, "Output: ", FOLDER)
+	runButton := widget.NewButton("Create Expense Reports", func() {
+		err := business(rosterPathBox.Text, templatePathBox.Text, outputPathBox.Text)
+		if err != nil {
+			dialog.ShowError(err, mainWindow)
+		}
+	})
 
 	mainWindow.SetContent(container.NewStack(
 		container.NewVBox(
-			templateRow, rosterRow, outputRow,
+			templateRow, rosterRow, outputRow, runButton,
 		),
 	))
 
 	mainWindow.ShowAndRun()
 	// TODO Build ui
 	// TODO Verify additions from Github
-}
-
-func businessHelper(rosterPath, templatePath, destinationPath string, parentWindow *fyne.Window) {
-	err := business(rosterPath, templatePath, destinationPath)
-	if err != nil {
-		dialog.ShowError(err, *parentWindow)
-	}
 }
 
 func err_check(err error) {
@@ -77,14 +73,14 @@ func get_loc_num(location string) string {
 }
 
 func business(rosterPath, templatePath, destinationPath string) error {
-	scanner := bufio.NewReader(os.Stdin)
-	fmt.Println("What is the path to the roster?")
-	rosterPath, err := scanner.ReadString('\n')
-	rosterPath = strings.TrimSpace(rosterPath)
-	for err != nil {
-		fmt.Println(err)
-		return err
-	}
+	// scanner := bufio.NewReader(os.Stdin)
+	// fmt.Println("What is the path to the roster?")
+	// rosterPath, err := scanner.ReadString('\n')
+	// rosterPath = strings.TrimSpace(rosterPath)
+	// for err != nil {
+	// 	fmt.Println(err)
+	// 	return err
+	// }
 
 	roster, err := excelize.OpenFile(strings.TrimSpace(rosterPath))
 	if err != nil {
@@ -92,14 +88,14 @@ func business(rosterPath, templatePath, destinationPath string) error {
 		return err
 	}
 
-	fmt.Println("What is the path to the base report?")
-	templatePath, err = scanner.ReadString('\n')
-	templatePath = strings.TrimSpace(templatePath)
-	templatePath = strings.Trim(templatePath, "\"")
-	for err != nil {
-		fmt.Println(err)
-		return err
-	}
+	// fmt.Println("What is the path to the base report?")
+	// templatePath, err = scanner.ReadString('\n')
+	// templatePath = strings.TrimSpace(templatePath)
+	// templatePath = strings.Trim(templatePath, "\"")
+	// for err != nil {
+	// 	fmt.Println(err)
+	// 	return err
+	// }
 
 	template, err := excelize.OpenFile(strings.TrimSpace(templatePath))
 	if err != nil {
@@ -107,20 +103,10 @@ func business(rosterPath, templatePath, destinationPath string) error {
 		return err
 	}
 
-	for {
-		fmt.Println("What is the path of the output?")
-		destinationPath, err = scanner.ReadString('\n')
-		destinationPath = strings.TrimSpace(destinationPath)
-		if err != nil {
-			fmt.Println("Error opening directory: ", err, "\n\n")
-			continue
-		}
-		_, err = os.ReadDir(destinationPath)
-		if err != nil {
-			fmt.Println("Error opening directory: ", err, "\n\n")
-			continue
-		}
-		break
+	_, err = os.ReadDir(destinationPath)
+	if err != nil {
+		fmt.Println("Error opening directory: ", err, "\n\n")
+		return err
 	}
 
 	locations, _ := template.GetRows("Mileage and Minutes")
@@ -157,7 +143,7 @@ func business(rosterPath, templatePath, destinationPath string) error {
 	return nil
 }
 
-func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne.Container, *widget.Entry) {
+func inputRow(parentWindow *fyne.Window, label string, openType InputType) (*fyne.Container, *widget.Entry) {
 	input := widget.NewEntry()
 	if openType == FILE {
 		input.SetPlaceHolder("C:\\Users\\me\\file.xlsx")
@@ -169,9 +155,9 @@ func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne
 	inputLabel := widget.NewLabel(label)
 	var containy *fyne.Container
 	if openType == FILE {
-		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
+		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { fileDialog(*parentWindow, input) }))
 	} else {
-		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
+		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { folderDialog(*parentWindow, input) }))
 	}
 	return containy, input
 }
