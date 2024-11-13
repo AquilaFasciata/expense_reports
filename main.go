@@ -151,7 +151,11 @@ func business(rosterPath, templatePath, destinationPath string) {
 
 func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne.Container, *widget.Entry) {
 	input := widget.NewEntry()
-	input.SetPlaceHolder("C:\\Users\\me\\file.xlsx")
+	if openType == FILE {
+		input.SetPlaceHolder("C:\\Users\\me\\file.xlsx")
+	} else {
+		input.SetPlaceHolder("C:\\Users\\me\\folder")
+	}
 	input.Resize(fyne.NewSize(400, input.Size().Height))
 
 	inputLabel := widget.NewLabel(label)
@@ -159,7 +163,7 @@ func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne
 	if openType == FILE {
 		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
 	} else {
-		containy = container.NewGridWithColumns(3, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
+		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
 	}
 	return containy, input
 }
