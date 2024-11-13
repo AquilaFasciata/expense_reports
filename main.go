@@ -155,7 +155,6 @@ func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne
 	input.Resize(fyne.NewSize(400, input.Size().Height))
 
 	inputLabel := widget.NewLabel(label)
-	inputLabel.Resize(fyne.Size{Width: input.MinSize().Width, Height: inputLabel.Size().Height})
 	var containy *fyne.Container
 	if openType == FILE {
 		containy = container.NewGridWithColumns(3, inputLabel, input, widget.NewButton("Browse", func() { fileDialog(parentWindow, input) }))
