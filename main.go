@@ -47,6 +47,13 @@ func main() {
 	// TODO Verify additions from Github
 }
 
+func businessHelper(rosterPath, templatePath, destinationPath string, parentWindow *fyne.Window) {
+	err := business(rosterPath, templatePath, destinationPath)
+	if err != nil {
+		dialog.ShowError(err, *parentWindow)
+	}
+}
+
 func err_check(err error) {
 	for err != nil {
 		fmt.Println(err)
@@ -69,20 +76,20 @@ func get_loc_num(location string) string {
 	return result
 }
 
-func business(rosterPath, templatePath, destinationPath string) {
+func business(rosterPath, templatePath, destinationPath string) error {
 	scanner := bufio.NewReader(os.Stdin)
 	fmt.Println("What is the path to the roster?")
 	rosterPath, err := scanner.ReadString('\n')
 	rosterPath = strings.TrimSpace(rosterPath)
 	for err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	roster, err := excelize.OpenFile(strings.TrimSpace(rosterPath))
 	if err != nil {
 		fmt.Println("Error reading roster: ", err)
-		return
+		return err
 	}
 
 	fmt.Println("What is the path to the base report?")
@@ -91,13 +98,13 @@ func business(rosterPath, templatePath, destinationPath string) {
 	templatePath = strings.Trim(templatePath, "\"")
 	for err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	template, err := excelize.OpenFile(strings.TrimSpace(templatePath))
 	if err != nil {
 		fmt.Println("Error reading template: ", err)
-		return
+		return err
 	}
 
 	for {
@@ -147,6 +154,7 @@ func business(rosterPath, templatePath, destinationPath string) {
 		template.SaveAs(destinationPath + "/" + name + ".xlsm")
 		template, _ = excelize.OpenFile(templatePath)
 	}
+	return nil
 }
 
 func inputRow(parentWindow fyne.Window, label string, openType InputType) (*fyne.Container, *widget.Entry) {
@@ -180,6 +188,7 @@ func fileDialog(parentWindow fyne.Window, box *widget.Entry) error {
 		}
 		if !slices.Contains(xlExtensions, reader.URI().Extension()) {
 			anyError = errors.New("Selected file is not a valid Excel file!")
+			dialog.ShowError(anyError, parentWindow)
 			return
 		}
 		fmt.Println(reader.URI().Extension())
