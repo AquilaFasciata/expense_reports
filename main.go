@@ -46,8 +46,6 @@ func main() {
 	))
 
 	mainWindow.ShowAndRun()
-	// TODO Build ui
-	// TODO Verify additions from Github
 }
 
 func err_check(err error) {
