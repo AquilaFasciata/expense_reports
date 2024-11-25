@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
@@ -16,6 +17,9 @@ import (
 
 	"github.com/xuri/excelize/v2"
 )
+
+//go:embed roster.xlsx
+var bundledTemplate []byte
 
 type InputType int
 
@@ -37,6 +41,11 @@ func main() {
 		if err != nil {
 			dialog.ShowError(err, mainWindow)
 		}
+	})
+	downloadButton := widget.NewButton("Download Roster Template", func() {
+		dialog.ShowFolderOpen(func(lu fyne.ListableURI, err error) {
+
+		})
 	})
 
 	mainWindow.SetContent(container.NewStack(
