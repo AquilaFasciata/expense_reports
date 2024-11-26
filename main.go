@@ -44,13 +44,24 @@ func main() {
 	})
 	downloadButton := widget.NewButton("Download Roster Template", func() {
 		dialog.ShowFolderOpen(func(lu fyne.ListableURI, err error) {
+			if lu == nil {
+				dialog.ShowError(errors.New("No Destination Selected. Not saving template"), mainWindow)
+			}
 
-		})
+			file, err := os.Create(lu.Path() + "/roster_template.xlsx")
+			if err != nil {
+				dialog.ShowError(err, mainWindow)
+				return
+			}
+			defer file.Close()
+
+			file.Write(bundledTemplate)
+		}, mainWindow)
 	})
 
 	mainWindow.SetContent(container.NewStack(
 		container.NewVBox(
-			templateRow, rosterRow, outputRow, runButton,
+			templateRow, rosterRow, outputRow, runButton, downloadButton,
 		),
 	))
 
