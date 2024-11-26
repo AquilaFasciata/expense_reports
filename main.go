@@ -55,7 +55,15 @@ func main() {
 			}
 			defer file.Close()
 
-			file.Write(bundledTemplate)
+			written, err := file.Write(bundledTemplate)
+			if err != nil {
+				dialog.ShowError(err, mainWindow)
+				return
+			}
+			if written != len(bundledTemplate) {
+				dialog.ShowError(errors.New("Error writing file: Written file is smaller than intended. Do you have enough space?"), mainWindow)
+				return
+			}
 		}, mainWindow)
 	})
 
