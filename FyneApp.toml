@@ -2,5 +2,12 @@
   Icon = "Icon.png"
   Name = "WTM Expense Report Helper"
   ID = "org.mrzach.wtmexp"
-  Version = "0.5.0"
+  Version = "1.0.0"
   Build = 7
+
+[LinuxAndBSD]
+  GenericName = "WTM Expense Report Builder"
+  Categories = ["Office"]
+  Comment = "Create expense reports for WTM"
+  Keywords = ["expense", "reports", "finance"]
+  ExecParams = ""
