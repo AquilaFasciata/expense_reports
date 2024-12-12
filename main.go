@@ -64,6 +64,7 @@ func main() {
 				dialog.ShowError(errors.New("Error writing file: Written file is smaller than intended. Do you have enough space?"), mainWindow)
 				return
 			}
+			dialog.ShowInformation("File Saved", "Template Saved Successfully", mainWindow)
 		}, mainWindow)
 	})
 
